@@ -140,11 +140,17 @@ function renderStrokeGuide(){
    const dx=e.x-before.x,dy=e.y-before.y,mag=Math.hypot(dx,dy)||1,ux=dx/mag,uy=dy/mag;
    const nx=-uy,ny=ux,tx=a.x-nx*7,ty=a.y-ny*7;
    const dotStart=document.createElementNS('http://www.w3.org/2000/svg','circle');dotStart.setAttribute('cx',a.x);dotStart.setAttribute('cy',a.y);dotStart.setAttribute('r','1.7');dotStart.setAttribute('fill',colors[i%colors.length]);dotStart.setAttribute('stroke','#fff');dotStart.setAttribute('stroke-width','.6');arrowBox.appendChild(dotStart);const label=document.createElementNS('http://www.w3.org/2000/svg','text');label.setAttribute('x',tx);label.setAttribute('y',ty);label.setAttribute('class','stroke-number');label.setAttribute('fill',colors[i%colors.length]);label.textContent=String(i+1);numberBox.appendChild(label);
-   const arrow=document.createElementNS('http://www.w3.org/2000/svg','path');const bx=e.x-ux*5,by=e.y-uy*5;arrow.setAttribute('d',`M ${bx-nx*2.5} ${by-ny*2.5} L ${e.x} ${e.y} L ${bx+nx*2.5} ${by+ny*2.5}`);arrow.setAttribute('class','stroke-arrow');arrow.setAttribute('stroke',colors[i%colors.length]);arrowBox.appendChild(arrow);
-   const dot=document.createElementNS('http://www.w3.org/2000/svg','circle');dot.setAttribute('cx',e.x);dot.setAttribute('cy',e.y);dot.setAttribute('r','1.7');dot.setAttribute('class','stroke-end');arrowBox.appendChild(dot);
+   // Arrowhead follows the actual tangent at the end of each source path.
+   const arrow=document.createElementNS('http://www.w3.org/2000/svg','path');
+   const tipX=e.x,tipY=e.y,baseX=e.x-ux*4.2,baseY=e.y-uy*4.2;
+   const wing=2.2;
+   arrow.setAttribute('d',`M ${baseX-nx*wing} ${baseY-ny*wing} L ${tipX} ${tipY} L ${baseX+nx*wing} ${baseY+ny*wing}`);
+   arrow.setAttribute('class','stroke-arrow');arrow.setAttribute('stroke',colors[i%colors.length]);
+   arrow.setAttribute('stroke-width','1.7');arrow.setAttribute('stroke-linecap','round');arrow.setAttribute('stroke-linejoin','round');arrowBox.appendChild(arrow);
+   const dot=document.createElementNS('http://www.w3.org/2000/svg','circle');dot.setAttribute('cx',e.x);dot.setAttribute('cy',e.y);dot.setAttribute('r','1.25');dot.setAttribute('class','stroke-end');arrowBox.appendChild(dot);
  });
  document.getElementById('strokeCurrent').textContent=`${char} • ${item[1]} — ${strokeIndex+1} dari ${strokes.length} goresan`;
- document.getElementById('strokeLegend').textContent='Titik bernomor = awal goresan • Panah = arah penulisan • Warna membedakan setiap goresan. Gunakan tombol Goresan untuk menyorot urutannya.';
+ document.getElementById('strokeLegend').textContent='Nomor menunjukkan urutan • Lingkaran putih berwarna menandai awal goresan • Panah menunjukkan arah gerakan • Goresan aktif disorot lebih tegas. Gunakan tombol untuk memeriksa satu per satu.';
 }
 function nextStroke(){if(!kanaStrokeData)return;const st=kanaStrokeData[currentKana()[ki]?.[0]]?.strokes||[];strokeIndex=Math.min(st.length-1,strokeIndex+1);renderStrokeGuide()}
 function prevStroke(){strokeIndex=Math.max(0,strokeIndex-1);renderStrokeGuide()}
