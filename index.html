@@ -22,6 +22,18 @@
 .kanji-card h4{margin:4px 0;color:var(--navy)}
 .kanji-card p{margin:3px 0;font-size:12px;color:var(--muted)}
 .lesson-block{border:1px solid var(--line);border-radius:13px;padding:15px;margin-top:12px;background:#fff}
+
+.vocab-tools{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0}
+.vocab-tools input,.vocab-tools select{padding:10px 12px;border:1px solid var(--line);border-radius:9px;background:#fff;color:var(--navy);font:inherit;min-width:180px}
+.vocab-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:14px}
+.vocab-card{border:1px solid var(--line);border-radius:13px;padding:14px;background:#fff;min-width:0}
+.vocab-word{font-size:30px;line-height:1.25;font-weight:850;color:var(--navy)}
+.vocab-reading{font-size:13px;color:var(--muted);margin-top:4px}
+.vocab-meaning{font-weight:750;margin-top:8px;color:var(--navy)}
+.vocab-example{font-size:12px;color:var(--muted);margin-top:8px;padding-top:8px;border-top:1px solid var(--line)}
+@media(max-width:800px){.vocab-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:480px){.vocab-grid{grid-template-columns:1fr}.vocab-tools input,.vocab-tools select{width:100%}}
+
 .lesson-block h3{margin:0 0 6px;color:var(--navy)}
 .lesson-block .jp-example{font-size:20px;font-weight:800;color:var(--navy);margin-top:8px}
 .lesson-block .romaji{font-size:12px;color:var(--muted)}
@@ -97,7 +109,7 @@
 
     <section class="view" id="kanji">
       <button class="back" onclick="showView('home')">← Kembali ke beranda</button>
-      <div class="section-head"><div><h2>Kanji Dasar N5 • 漢字</h2><p>Unit 1 — 20 Kanji pengenalan. Pelajari arti, bacaan, dan contoh pemakaiannya.</p></div></div>
+      <div class="section-head"><div><h2>Kanji Dasar N5 • 漢字</h2><p>Unit 1–2 — 40 Kanji pengenalan. Pelajari arti, bacaan, dan contoh pemakaiannya.</p></div></div>
       <div class="panel">
         <h3>Flashcard Kanji</h3>
         <p>Ingat arti terlebih dahulu, lalu buka bacaan dan contoh katanya.</p>
@@ -110,11 +122,11 @@
           <button class="outline" onclick="flipKanji()">Lihat jawaban</button>
           <button class="outline" onclick="nextKanji()">Berikutnya →</button>
         </div>
-        <div class="progress-row"><span id="kanjiCounter">1 / 20</span><span>Unit 01</span></div>
+        <div class="progress-row"><span id="kanjiCounter">1 / 20</span><span>Unit 01–02</span></div>
       </div>
 
       <div class="panel">
-        <div class="level">JLPT N5 • UNIT 01</div>
+        <div class="level">JLPT N5 • UNIT 01–02</div>
         <h3>Kanji sehari-hari</h3>
         <p>Mulailah dengan mengenali bentuk dan makna. Bacaan Kanji dapat berubah sesuai kata dan konteks.</p>
         <div class="kanji-grid" id="kanjiGrid"></div>
@@ -124,8 +136,29 @@
 
     <section class="view" id="vocab">
       <button class="back" onclick="showView('home')">← Kembali ke beranda</button>
-      <div class="section-head"><div><h2>Kosakata • 語彙</h2><p>Flashcard kosakata dasar untuk pemula.</p></div></div>
-      <div class="panel"><div class="flashcard"><div class="kana" id="word">水</div><div class="meaning" id="wordMeaning">みず • mizu • air</div></div><div class="actions"><button class="outline" onclick="prevWord()">← Sebelumnya</button><button class="outline" onclick="nextWord()">Berikutnya →</button></div></div>
+      <div class="section-head"><div><h2>Kosakata N5 • 語彙</h2><p>Pelajari kosakata melalui flashcard, lalu lihat kumpulan kata beserta cara baca dan artinya.</p></div></div>
+      <div class="panel">
+        <div class="level">JLPT N5 • KOSAKATA DASAR</div>
+        <h3>Flashcard Kosakata</h3>
+        <p>Ingat arti kata terlebih dahulu, lalu tekan kartu untuk melihat cara baca dan artinya.</p>
+        <div class="flashcard" id="wordFlashcard" onclick="flipWord()" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();flipWord()}">
+          <div class="kana" id="word">水</div><div class="meaning" id="wordMeaning">Sentuh kartu untuk melihat bacaan dan arti</div>
+        </div>
+        <div class="actions"><button class="outline" onclick="prevWord()">← Sebelumnya</button><button class="outline" onclick="flipWord()">Lihat jawaban</button><button class="outline" onclick="nextWord()">Berikutnya →</button></div>
+        <div class="progress-row"><span id="wordCounter">1 / 20</span><span>Flashcard N5</span></div>
+      </div>
+      <div class="panel">
+        <div class="level">DAFTAR MATERI</div>
+        <h3>Kumpulan Kosakata</h3>
+        <p>Pilih kata untuk mempelajari kosakata tersebut melalui flashcard.</p>
+        <div class="vocab-tools">
+          <input id="vocabSearch" type="search" placeholder="Cari kata Jepang atau arti..." oninput="renderWordGrid()" aria-label="Cari kosakata">
+          <select id="vocabCategory" onchange="renderWordGrid()" aria-label="Filter kategori kosakata">
+            <option value="Semua">Semua kategori</option><option value="Benda">Benda</option><option value="Orang">Orang</option><option value="Tempat">Tempat</option><option value="Waktu">Waktu</option><option value="Aktivitas">Aktivitas</option>
+          </select>
+        </div>
+        <div class="vocab-grid" id="vocabGrid"></div>
+      </div>
     </section>
 
     <section class="view" id="grammar">
@@ -148,7 +181,7 @@
       <div class="section-head"><div><h2>Progres Belajar • 進捗</h2><p>Ringkasan aktivitas pada perangkat ini.</p></div></div>
       <div class="panel"><h3>Perjalanan belajar Anda</h3><p>Progres demo akan bertambah ketika Anda menyelesaikan latihan. Data tersimpan di browser perangkat ini.</p><div class="progress-row"><span>Latihan N5 selesai</span><b id="progressText">0%</b></div><div class="bar"><span id="progressBar"></span></div><p style="margin-top:14px">Skor latihan terbaik: <b id="bestScore">Belum ada</b></p></div>
     </section>
-    <div class="footer">NIHONGO MASTER ACADEMY • MASTER THE LANGUAGE. OPEN YOUR FUTURE.<br>Materi pembelajaran N5 dikembangkan bertahap. Unit Kanji 01 memuat 20 Kanji pengenalan.<br>Data urutan goresan kana: KanjiVG / Ulrich Apel, CC BY-SA 3.0; diolah dari proyek kana-strokes.</div>
+    <div class="footer">NIHONGO MASTER ACADEMY • MASTER THE LANGUAGE. OPEN YOUR FUTURE.<br>Materi pembelajaran N5 dikembangkan bertahap. Unit Kanji 01–02 memuat 40 Kanji pengenalan.<br>Data urutan goresan kana: KanjiVG / Ulrich Apel, CC BY-SA 3.0; diolah dari proyek kana-strokes.</div>
   </main>
 </div>
 </div>
@@ -224,7 +257,28 @@ const kanjiData=[
  {k:'中',meaning:'dalam; tengah',on:'チュウ',kun:'なか',word:'中（なか）— di dalam'},
  {k:'上',meaning:'atas',on:'ジョウ・ショウ',kun:'うえ・あがる',word:'上（うえ）— atas'},
  {k:'下',meaning:'bawah',on:'カ・ゲ',kun:'した・さがる',word:'下（した）— bawah'},
- {k:'学',meaning:'belajar; ilmu',on:'ガク',kun:'まなぶ',word:'学生（がくせい）— pelajar'}
+ {k:'学',meaning:'belajar; ilmu',on:'ガク',kun:'まなぶ',word:'学生（がくせい）— pelajar'},
+
+ {k:'年',meaning:'tahun',on:'ネン',kun:'とし',word:'今年（ことし）— tahun ini'},
+ {k:'時',meaning:'waktu; jam',on:'ジ',kun:'とき',word:'時間（じかん）— waktu'},
+ {k:'分',meaning:'menit; bagian; memahami',on:'ブン・フン',kun:'わかる',word:'五分（ごふん）— lima menit'},
+ {k:'半',meaning:'setengah',on:'ハン',kun:'なかば',word:'半分（はんぶん）— setengah'},
+ {k:'午',meaning:'tengah hari',on:'ゴ',kun:'—',word:'午前（ごぜん）— pagi / AM'},
+ {k:'前',meaning:'depan; sebelum',on:'ゼン',kun:'まえ',word:'名前（なまえ）— nama'},
+ {k:'後',meaning:'belakang; sesudah',on:'ゴ・コウ',kun:'あと・うしろ',word:'午後（ごご）— sore / PM'},
+ {k:'毎',meaning:'setiap',on:'マイ',kun:'—',word:'毎日（まいにち）— setiap hari'},
+ {k:'今',meaning:'sekarang',on:'コン・キン',kun:'いま',word:'今日（きょう）— hari ini'},
+ {k:'何',meaning:'apa; berapa',on:'カ',kun:'なに・なん',word:'何時（なんじ）— jam berapa'},
+ {k:'円',meaning:'yen; lingkaran',on:'エン',kun:'まるい',word:'百円（ひゃくえん）— 100 yen'},
+ {k:'百',meaning:'seratus',on:'ヒャク',kun:'—',word:'三百（さんびゃく）— 300'},
+ {k:'千',meaning:'seribu',on:'セン',kun:'ち',word:'千円（せんえん）— 1.000 yen'},
+ {k:'万',meaning:'sepuluh ribu',on:'マン・バン',kun:'—',word:'一万円（いちまんえん）— 10.000 yen'},
+ {k:'名',meaning:'nama; terkenal',on:'メイ・ミョウ',kun:'な',word:'名前（なまえ）— nama'},
+ {k:'女',meaning:'perempuan',on:'ジョ・ニョ',kun:'おんな',word:'女の人（おんなのひと）— perempuan'},
+ {k:'男',meaning:'laki-laki',on:'ダン・ナン',kun:'おとこ',word:'男の人（おとこのひと）— laki-laki'},
+ {k:'子',meaning:'anak',on:'シ・ス',kun:'こ',word:'子ども（こども）— anak-anak'},
+ {k:'父',meaning:'ayah',on:'フ',kun:'ちち',word:'父（ちち）— ayah saya'},
+ {k:'母',meaning:'ibu',on:'ボ',kun:'はは',word:'母（はは）— ibu saya'}
 ];
 let kiKanji=0,kanjiRevealed=false;
 function renderKanji(){
@@ -239,13 +293,44 @@ function nextKanji(){kiKanji=(kiKanji+1)%kanjiData.length;kanjiRevealed=false;re
 function prevKanji(){kiKanji=(kiKanji+kanjiData.length-1)%kanjiData.length;kanjiRevealed=false;renderKanji()}
 
 const words=[
- ['水','みず • mizu • air'],['山','やま • yama • gunung'],['人','ひと • hito • orang'],['本','ほん • hon • buku'],['学校','がっこう • gakkou • sekolah'],
- ['学生','がくせい • gakusei • pelajar'],['先生','せんせい • sensei • guru'],['友達','ともだち • tomodachi • teman'],['家','いえ • ie • rumah'],['車','くるま • kuruma • mobil'],
- ['電車','でんしゃ • densha • kereta listrik'],['駅','えき • eki • stasiun'],['食べ物','たべもの • tabemono • makanan'],['飲み物','のみもの • nomimono • minuman'],['今日','きょう • kyou • hari ini'],
- ['明日','あした • ashita • besok'],['昨日','きのう • kinou • kemarin'],['仕事','しごと • shigoto • pekerjaan'],['会社','かいしゃ • kaisha • perusahaan'],['日本','にほん • nihon • Jepang']
-];let wi=0;
-function renderWord(){document.getElementById('word').textContent=words[wi][0];document.getElementById('wordMeaning').textContent=words[wi][1]}
-function nextWord(){wi=(wi+1)%words.length;renderWord()}function prevWord(){wi=(wi+words.length-1)%words.length;renderWord()}
+ {jp:'水',kana:'みず',romaji:'mizu',meaning:'air',category:'Benda',example:'水を飲みます。 — Saya minum air.'},
+ {jp:'山',kana:'やま',romaji:'yama',meaning:'gunung',category:'Tempat',example:'山に行きます。 — Saya pergi ke gunung.'},
+ {jp:'人',kana:'ひと',romaji:'hito',meaning:'orang',category:'Orang',example:'あの人は先生です。 — Orang itu guru.'},
+ {jp:'本',kana:'ほん',romaji:'hon',meaning:'buku',category:'Benda',example:'本を読みます。 — Saya membaca buku.'},
+ {jp:'学校',kana:'がっこう',romaji:'gakkou',meaning:'sekolah',category:'Tempat',example:'学校へ行きます。 — Saya pergi ke sekolah.'},
+ {jp:'学生',kana:'がくせい',romaji:'gakusei',meaning:'pelajar / mahasiswa',category:'Orang',example:'私は学生です。 — Saya seorang pelajar.'},
+ {jp:'先生',kana:'せんせい',romaji:'sensei',meaning:'guru',category:'Orang',example:'先生に聞きます。 — Saya bertanya kepada guru.'},
+ {jp:'友達',kana:'ともだち',romaji:'tomodachi',meaning:'teman',category:'Orang',example:'友達と話します。 — Saya berbicara dengan teman.'},
+ {jp:'家',kana:'いえ',romaji:'ie',meaning:'rumah',category:'Tempat',example:'家に帰ります。 — Saya pulang ke rumah.'},
+ {jp:'車',kana:'くるま',romaji:'kuruma',meaning:'mobil',category:'Benda',example:'車があります。 — Ada mobil.'},
+ {jp:'電車',kana:'でんしゃ',romaji:'densha',meaning:'kereta listrik',category:'Benda',example:'電車で行きます。 — Pergi naik kereta.'},
+ {jp:'駅',kana:'えき',romaji:'eki',meaning:'stasiun',category:'Tempat',example:'駅で会います。 — Bertemu di stasiun.'},
+ {jp:'食べ物',kana:'たべもの',romaji:'tabemono',meaning:'makanan',category:'Benda',example:'食べ物を買います。 — Membeli makanan.'},
+ {jp:'飲み物',kana:'のみもの',romaji:'nomimono',meaning:'minuman',category:'Benda',example:'飲み物はいかがですか。 — Mau minum apa?'}, 
+ {jp:'今日',kana:'きょう',romaji:'kyou',meaning:'hari ini',category:'Waktu',example:'今日は月曜日です。 — Hari ini hari Senin.'},
+ {jp:'明日',kana:'あした',romaji:'ashita',meaning:'besok',category:'Waktu',example:'明日、日本へ行きます。 — Besok pergi ke Jepang.'},
+ {jp:'昨日',kana:'きのう',romaji:'kinou',meaning:'kemarin',category:'Waktu',example:'昨日、勉強しました。 — Kemarin belajar.'},
+ {jp:'仕事',kana:'しごと',romaji:'shigoto',meaning:'pekerjaan',category:'Aktivitas',example:'仕事をします。 — Bekerja.'},
+ {jp:'会社',kana:'かいしゃ',romaji:'kaisha',meaning:'perusahaan / kantor',category:'Tempat',example:'会社へ行きます。 — Pergi ke kantor.'},
+ {jp:'日本',kana:'にほん',romaji:'nihon',meaning:'Jepang',category:'Tempat',example:'日本語を勉強します。 — Belajar bahasa Jepang.'}
+];
+let wi=0,wordRevealed=false;
+function renderWord(){
+ const x=words[wi];document.getElementById('word').textContent=x.jp;
+ document.getElementById('wordMeaning').textContent=wordRevealed?`${x.kana} • ${x.romaji} • ${x.meaning}`:'Sentuh kartu untuk melihat bacaan dan arti';
+ document.getElementById('wordCounter').textContent=`${wi+1} / ${words.length}`;
+}
+function flipWord(){wordRevealed=!wordRevealed;renderWord()}
+function nextWord(){wi=(wi+1)%words.length;wordRevealed=false;renderWord()}
+function prevWord(){wi=(wi+words.length-1)%words.length;wordRevealed=false;renderWord()}
+function selectWord(i){wi=i;wordRevealed=true;renderWord();document.getElementById('wordFlashcard').scrollIntoView({behavior:'smooth',block:'center'})}
+function renderWordGrid(){
+ const grid=document.getElementById('vocabGrid');if(!grid)return;
+ const q=(document.getElementById('vocabSearch').value||'').toLowerCase();
+ const cat=document.getElementById('vocabCategory').value;
+ const filtered=words.map((x,i)=>({...x,index:i})).filter(x=>(cat==='Semua'||x.category===cat)&&[x.jp,x.kana,x.romaji,x.meaning,x.category].join(' ').toLowerCase().includes(q));
+ grid.innerHTML=filtered.length?filtered.map(x=>`<article class="vocab-card" role="button" tabindex="0" onclick="selectWord(${x.index})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();selectWord(${x.index})}"><div class="vocab-word">${x.jp}</div><div class="vocab-reading">${x.kana} • ${x.romaji}</div><div class="vocab-meaning">${x.meaning}</div><div class="vocab-example">${x.category}</div></article>`).join(''):'<p> Kosakata tidak ditemukan. Coba kata pencarian lain.</p>';
+}
 const questions=[
  {q:'Apa arti dari 「ありがとう」?',o:['Selamat pagi','Terima kasih','Permisi','Selamat malam'],a:1,e:'ありがとう (arigatou) berarti terima kasih.'},
  {q:'Bagaimana membaca huruf 「あ」?',o:['i','u','a','e'],a:2,e:'あ dibaca a.'},
@@ -257,7 +342,7 @@ function renderQuiz(){answered=false;document.getElementById('quizCount').textCo
 function answer(i){if(answered)return;answered=true;const q=questions[qi];const correct=i===q.a;if(correct)score++;document.querySelectorAll('.quiz-option').forEach((b,j)=>{b.disabled=true;if(j===q.a)b.style.borderColor='#168653';if(j===i&&!correct)b.style.borderColor='#bc002d'});document.getElementById('feedback').textContent=(correct?'✓ Benar! ':'✕ Belum tepat. ')+q.e;document.getElementById('feedback').style.color=correct?'#168653':'#bc002d';document.getElementById('nextQuestion').style.display='inline-block';document.getElementById('nextQuestion').textContent=qi===questions.length-1?'Lihat hasil':'Soal berikutnya →'}
 function nextQuestion(){if(qi<questions.length-1){qi++;renderQuiz()}else{const best=Math.max(score,Number(localStorage.getItem('nmaBest')||0));localStorage.setItem('nmaBest',best);localStorage.setItem('nmaDone','1');document.getElementById('question').textContent=`Latihan selesai! Skor Anda ${score} dari ${questions.length}.`;document.getElementById('options').innerHTML='';document.getElementById('feedback').textContent='Terus berlatih untuk meningkatkan kemampuan bahasa Jepang Anda.';document.getElementById('nextQuestion').textContent='Ulangi latihan';document.getElementById('nextQuestion').onclick=()=>{qi=0;score=0;document.getElementById('nextQuestion').onclick=nextQuestion;renderQuiz()};}}
 function updateProgress(){const done=localStorage.getItem('nmaDone')==='1';document.getElementById('progressText').textContent=done?'100%':'0%';document.getElementById('progressBar').style.width=done?'100%':'0%';const best=localStorage.getItem('nmaBest');document.getElementById('bestScore').textContent=best===null?'Belum ada':best+' / 5'}
-renderKana();renderKanji();renderWord();renderQuiz();
+renderKana();renderKanji();renderWord();renderWordGrid();renderQuiz();
 </script>
 </body>
 </html>
