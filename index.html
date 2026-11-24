@@ -60,6 +60,20 @@
 .progress-module b{display:block;color:var(--navy);margin-bottom:5px}
 .progress-module span{font-size:13px;color:var(--muted)}
 .divider{height:1px;background:var(--line);margin:22px 0}
+
+.level-tabs.sidebar-level-tabs{display:flex;flex-direction:column;align-items:stretch;gap:4px;margin:5px 0 12px 34px;padding:0}
+.level-tabs.sidebar-level-tabs[hidden]{display:none}
+.level-tabs.sidebar-level-tabs button{width:112px;min-height:58px;justify-content:flex-start;gap:12px;padding:10px 16px;border-radius:17px;background:#fff;color:#243b5b;box-shadow:0 2px 9px rgba(15,23,42,.09);font-size:15px}
+.level-tabs.sidebar-level-tabs button span{font-size:27px;color:#647b99}
+.level-tabs.sidebar-level-tabs button:hover,.level-tabs.sidebar-level-tabs button.active{background:#eaf1ff;color:#12336b}
+.level-tabs.sidebar-level-tabs button.active span{color:#12336b}
+
+.level-tabs.main-level-tabs{display:flex;flex-direction:row;align-items:center;justify-content:flex-start;gap:16px;flex-wrap:wrap;margin:0 0 24px;padding:0}
+.level-tabs.main-level-tabs[hidden]{display:none}
+.level-tabs.main-level-tabs button{min-width:112px;min-height:82px;justify-content:center;gap:12px;padding:14px 20px;border-radius:18px;background:#fff;color:#243b5b;box-shadow:0 3px 12px rgba(15,23,42,.09);font-size:17px}
+.level-tabs.main-level-tabs button span{font-size:32px;color:#647b99}
+.level-tabs.main-level-tabs button:hover,.level-tabs.main-level-tabs button.active{background:#eaf1ff;color:#12336b}
+.level-tabs.main-level-tabs button.active span{color:#12336b}
 </style>
 </head>
 <body>
@@ -81,7 +95,7 @@
 <div class="side-note"><b>がんばりましょう！</b><br>Belajar sedikit demi sedikit setiap hari adalah kunci kemajuan.</div>
 </aside>
   <main class="main">
-    <div class="level-tabs" id="benkyou-level-tabs" hidden aria-label="Pilih level Benkyou">
+    <div class="level-tabs main-level-tabs" id="benkyou-level-tabs" hidden aria-label="Pilih level Benkyou">
       <button type="button" data-level="n5" onclick="showView('n5')"><span>五</span> N5</button>
       <button type="button" data-level="n4" onclick="showView('n4')"><span>四</span> N4</button>
       <button type="button" data-level="n3" onclick="showView('n3')"><span>三</span> N3</button>
@@ -247,7 +261,7 @@ function markLearned(module,item){const p=getLearningProgress();p.seen[module]=p
 function recordAssessment(module,correct,total){const p=getLearningProgress();p.scores[module]=p.scores[module]||{correct:0,total:0};p.scores[module].correct+=correct?1:0;p.scores[module].total+=1;saveLearningProgress(p)}
 function updateProgress(){const p=getLearningProgress();const modules=[['Huruf Jepang','kana',46],['Kanji N5','kanji',kanjiData.length],['Kosakata N5','vocab',words.length],['Tata Bahasa N5','grammar',document.querySelectorAll('#grammar .lesson-block,#grammar .grammar-card').length],['Dokkai N5','dokkai',dokkaiLessons.length],['Choukai N5','choukai',choukaiLessons.length],['Latihan Dasar','quiz',questions.length]];let done=0,total=0;const box=document.getElementById('progressModules');box.innerHTML=modules.map(([label,key,target])=>{const count=(p.seen[key]||[]).length;done+=Math.min(count,target);total+=target;return `<div class="progress-module"><b>${label}</b><span>${Math.min(count,target)} / ${target} dipelajari</span></div>`}).join('');const pct=total?Math.round(done/total*100):0;document.getElementById('progressText').textContent=pct+'%';document.getElementById('progressBar').style.width=pct+'%';let c=0,t=0;['quiz','dokkai','choukai'].forEach(k=>{if(p.scores[k]){c+=p.scores[k].correct;t+=p.scores[k].total}});const est=t?Math.round(c/t*100):0;document.getElementById('estimatedScore').textContent=t?est+' / 100':'Belum cukup data';document.getElementById('estimateBar').style.width=est+'%';let msg='Jawab lebih banyak soal agar estimasi kesiapan dapat dihitung.';if(t>=5){if(est>=85)msg='Sangat baik. Anda berpotensi siap mengikuti simulasi ujian N5. Tetap latih semua bagian.';else if(est>=75)msg='Cukup baik, tetapi perlu penguatan pada materi yang masih salah sebelum simulasi ujian.';else if(est>=60)msg='Kemampuan dasar mulai terbentuk. Perbanyak latihan dan ulangi materi yang belum dikuasai.';else msg='Belum siap. Disarankan mengulang materi dasar dan berlatih secara bertahap.'}document.getElementById('readinessText').textContent=msg;const best=localStorage.getItem('nmaBest');document.getElementById('bestScore').textContent=best===null?'Belum ada':best+' / '+questions.length}
 const views=['home','n5','n4','n3','n2','n1','alphabet','kanji','vocab','grammar','dokkai','choukai','quiz','progress'];
-function toggleBenkyou(){const tabs=document.getElementById('benkyou-level-tabs');const trigger=document.querySelector('.benkyou-trigger');const opening=tabs.hidden;tabs.hidden=!opening;trigger.setAttribute('aria-expanded',String(opening));trigger.classList.toggle('active',opening);}
+function toggleBenkyou(){const tabs=document.getElementById('benkyou-level-tabs');const trigger=document.querySelector('.benkyou-trigger');const opening=tabs.hidden;tabs.hidden=!opening;trigger.setAttribute('aria-expanded',String(opening));trigger.classList.toggle('active',opening);if(opening){views.forEach(v=>document.getElementById(v).classList.toggle('active',v==='home'));document.querySelectorAll('.nav').forEach(b=>b.classList.toggle('active',b===trigger));window.scrollTo({top:0,behavior:'smooth'});}}
 function showView(id){views.forEach(v=>document.getElementById(v).classList.toggle('active',v===id));document.querySelectorAll('.nav').forEach(b=>b.classList.toggle('active',b.dataset.view===id));const isLevel=/^n[1-5]$/.test(id);const tabs=document.getElementById('benkyou-level-tabs');const trigger=document.querySelector('.benkyou-trigger');if(isLevel){tabs.hidden=false;trigger.setAttribute('aria-expanded','true');trigger.classList.add('active');}else{trigger.classList.remove('active');}document.querySelectorAll('.level-tabs button').forEach(b=>b.classList.toggle('active',b.dataset.level===id));if(id==='progress')updateProgress();window.scrollTo({top:0,behavior:'smooth'});}
 const kanaData={
  hiragana:{seion:[['あ','a'],['い','i'],['う','u'],['え','e'],['お','o'],['か','ka'],['き','ki'],['く','ku'],['け','ke'],['こ','ko'],['さ','sa'],['し','shi'],['す','su'],['せ','se'],['そ','so'],['た','ta'],['ち','chi'],['つ','tsu'],['て','te'],['と','to'],['な','na'],['に','ni'],['ぬ','nu'],['ね','ne'],['の','no'],['は','ha'],['ひ','hi'],['ふ','fu'],['へ','he'],['ほ','ho'],['ま','ma'],['み','mi'],['む','mu'],['め','me'],['も','mo'],['や','ya'],['ゆ','yu'],['よ','yo'],['ら','ra'],['り','ri'],['る','ru'],['れ','re'],['ろ','ro'],['わ','wa'],['を','o (partikel: wo)'],['ん','n']],dakuon:[['が','ga'],['ぎ','gi'],['ぐ','gu'],['げ','ge'],['ご','go'],['ざ','za'],['じ','ji'],['ず','zu'],['ぜ','ze'],['ぞ','zo'],['だ','da'],['ぢ','ji (langka)'],['づ','zu (langka)'],['で','de'],['ど','do'],['ば','ba'],['び','bi'],['ぶ','bu'],['べ','be'],['ぼ','bo']],handakuon:[['ぱ','pa'],['ぴ','pi'],['ぷ','pu'],['ぺ','pe'],['ぽ','po']],youon:[['きゃ','kya'],['きゅ','kyu'],['きょ','kyo'],['しゃ','sha'],['しゅ','shu'],['しょ','sho'],['ちゃ','cha'],['ちゅ','chu'],['ちょ','cho'],['にゃ','nya'],['にゅ','nyu'],['にょ','nyo'],['ひゃ','hya'],['ひゅ','hyu'],['ひょ','hyo'],['みゃ','mya'],['みゅ','myu'],['みょ','myo'],['りゃ','rya'],['りゅ','ryu'],['りょ','ryo'],['ぎゃ','gya'],['ぎゅ','gyu'],['ぎょ','gyo'],['じゃ','ja'],['じゅ','ju'],['じょ','jo'],['びゃ','bya'],['びゅ','byu'],['びょ','byo'],['ぴゃ','pya'],['ぴゅ','pyu'],['ぴょ','pyo']],small:[['ぁ','a kecil'],['ぃ','i kecil'],['ぅ','u kecil'],['ぇ','e kecil'],['ぉ','o kecil'],['ゃ','ya kecil'],['ゅ','yu kecil'],['ょ','yo kecil'],['っ','sokuon: konsonan rangkap']],foreign:[]},
